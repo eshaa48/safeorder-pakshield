@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% block title %}PakShield — Admin{% endblock %}
+{% block page_title %}Admin Control Center{% endblock %}
+{% block page_subtitle %}Users, delivery reports, approvals aur search activity manage karein.{% endblock %}
+
+{% block content %}
+<div class="stats-grid compact">
+    <div class="stat-card"><strong>{{ stats.active_sellers }}</strong><p>Total Users</p></div>
+    <div class="stat-card"><strong>{{ stats.total_reports }}</strong><p>Total Reports</p></div>
+    <div class="stat-card"><strong>{{ stats.pending_reports }}</strong><p>Pending Reports</p></div>
+    <div class="stat-card"><strong>{{ stats.today_searches }}</strong><p>Searches Today</p></div>
+</div>
+
+<div class="panel form-panel">
+    <div class="panel-head"><h2>Add New Seller</h2></div>
+    <form method="POST" action="/admin/add-user" class="admin-user-form">
+        <input type="email" name="email" placeholder="seller@gmail.com" required>
+        <input type="text" name="name" placeholder="Name" required>
+        <input type="text" name="business" placeholder="Business name">
+        <select name="role"><option value="user">User</option><option value="admin">Admin</option></select>
+        <select name="plan"><option value="free">Free</option><option value="basic">Basic</option><option value="premium">Premium</option></select>
+        <input type="text" name="limit" placeholder="Limit" value="50">
+        <button class="btn btn-primary" type="submit">Add User</button>
+    </form>
+</div>
+
+<div class="panel">
+    <div class="panel-head">
+        <div>
+            <h2>Delivery Reports</h2>
+            <p>Pending reports approve/reject karein. Approved reports search result mein show honge.</p>
+        </div>
+    </div>
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Customer</th><th>Phone</th><th>City</th><th>Issue</th><th>Business</th><th>Status</th><th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for r in reports %}
+                <tr>
+                    <td>{{ r.get('Customer Name', '-') }}</td>
+                    <td>{{ r.get('Phone Number', '-') }}</td>
+                    <td>{{ r.get('City', '-') }}</td>
+                    <td>{{ r.get('Issue Type', r.get('Reason', '-')) }}</td>
+                    <td>{{ r.get('Business Name', r.get('Reported By Email', '-')) }}</td>
+                    <td><span class="status {{ r.get('Verification Status', 'approved')|lower }}">{{ r.get('Verification Status', 'approved') }}</span></td>
+                    <td class="actions">
+                        {% if r.get('Report ID') %}
+                        <form method="POST" action="/admin/report/{{ r.get('Report ID') }}/approve"><button class="mini-btn approve">Approve</button></form>
+                        <form method="POST" action="/admin/report/{{ r.get('Report ID') }}/reject"><button class="mini-btn reject">Reject</button></form>
+                        <form method="POST" action="/admin/report/{{ r.get('Report ID') }}/delete"><button class="mini-btn delete">Delete</button></form>
+                        {% else %}
+                        <span class="muted">Old record</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% else %}
+                <tr><td colspan="7" class="empty">No reports found.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="two-col">
+    <div class="panel">
+        <div class="panel-head"><h2>Users</h2></div>
+        <div class="table-wrap small-table">
+            <table>
+                <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Plan</th></tr></thead>
+                <tbody>
+                    {% for u in users %}
+                    <tr><td>{{ u.get('Name', '-') }}</td><td>{{ u.get('Email', '-') }}</td><td>{{ u.get('Role', '-') }}</td><td>{{ u.get('Plan', '-') }}</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="panel">
+        <div class="panel-head"><h2>Recent Searches</h2></div>
+        <div class="table-wrap small-table">
+            <table>
+                <thead><tr><th>User</th><th>Phone</th><th>Found</th><th>Time</th></tr></thead>
+                <tbody>
+                    {% for l in logs %}
+                    <tr><td>{{ l.get('User Email', '-') }}</td><td>{{ l.get('Phone Number', '-') }}</td><td>{{ l.get('Result Found', '-') }}</td><td>{{ l.get('Searched At', '-') }}</td></tr>
+                    {% else %}
+                    <tr><td colspan="4" class="empty">No search logs.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

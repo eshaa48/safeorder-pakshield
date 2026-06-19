@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PakShield — Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="login-body">
+    <div class="login-shell">
+        <div class="login-info">
+            <div class="brand large">
+                <span class="brand-icon"><i class="fa-solid fa-shield-halved"></i></span>
+                <span>
+                    <strong>SafeOrder</strong>
+                    <small>COD Risk Intelligence</small>
+                </span>
+            </div>
+            <h1>Seller Protection for COD Businesses</h1>
+            <p>Customer delivery issue history, courier insights, and seller risk verification in one dashboard.</p>
+            <div class="login-points">
+                <span><i class="fa-solid fa-lock"></i> Invite-only access</span>
+                <span><i class="fa-solid fa-database"></i> Controlled data visibility</span>
+                <span><i class="fa-solid fa-chart-simple"></i> Risk-based decisions</span>
+            </div>
+        </div>
+
+        <div class="login-card">
+            <h2>Sign in</h2>
+            <p>Authorized sellers only. Use your approved Google account.</p>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="flash {{ category }}">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <a href="/google-login" class="google-btn">
+                <i class="fa-brands fa-google"></i>
+                Continue with Google
+            </a>
+            <div class="security-note">
+                <i class="fa-solid fa-circle-info"></i>
+                Access will only be granted to those email addresses that have been approved by the admin in the Users sheet.
+            </div>
+        </div>
+    </div>
+</body>
+</html>

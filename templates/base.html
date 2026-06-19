@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}PakShield{% endblock %}</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <aside class="sidebar">
+        <a href="/dashboard" class="brand">
+            <div class="brand-icon">
+                <i class="fa-solid fa-shield-halved"></i>
+            </div>
+            <div>
+                <div class="brand-name">SafeOrder</div>
+                <div class="brand-subtitle">COD Risk Intelligence</div>
+            </div>
+        </a>
+
+        <nav class="side-nav">
+            <a href="/dashboard" class="nav-link {% if request.endpoint == 'dashboard' %}active{% endif %}">
+                <i class="fa-solid fa-chart-line"></i>
+                <span>Dashboard</span>
+            </a>
+
+            <a href="/search" class="nav-link {% if request.endpoint == 'search' %}active{% endif %}">
+                <i class="fa-solid fa-magnifying-glass-chart"></i>
+                <span>Risk Check</span>
+            </a>
+
+            <a href="/add" class="nav-link {% if request.endpoint == 'add' %}active{% endif %}">
+                <i class="fa-solid fa-file-circle-plus"></i>
+                <span>Submit Issue</span>
+            </a>
+
+            <a href="/courier-reviews" class="nav-link {% if request.endpoint == 'courier_reviews' %}active{% endif %}">
+                <i class="fa-solid fa-truck-fast"></i>
+                <span>Courier Insights</span>
+            </a>
+
+            {% if user and user.role == 'admin' %}
+            <a href="/admin" class="nav-link {% if request.endpoint == 'admin' %}active{% endif %}">
+                <i class="fa-solid fa-user-shield"></i>
+                <span>Admin Panel</span>
+            </a>
+            {% endif %}
+        </nav>
+
+        {% if user %}
+        <div class="sidebar-user">
+            <div class="sidebar-avatar">
+                {{ user.name[0].upper() if user.name else 'U' }}
+            </div>
+            <div>
+                <div class="sidebar-user-name">{{ user.name }}</div>
+                <div class="sidebar-user-plan">{{ user.plan|title }} Plan</div>
+            </div>
+        </div>
+        {% endif %}
+    </aside>
+
+    <main class="main">
+        <header class="topbar">
+            <div>
+                <h1 class="topbar-title">{% block page_title %}Dashboard{% endblock %}</h1>
+                <p class="topbar-subtitle">{% block page_subtitle %}Monitor seller activity and COD risk signals.{% endblock %}</p>
+            </div>
+
+            <div class="topbar-actions">
+                {% if user %}
+                <span class="role-pill">
+                    <i class="fa-solid fa-circle-check"></i>
+                    {{ user.role|upper }}
+                </span>
+                <a href="/logout" class="btn btn-secondary">Logout</a>
+                {% endif %}
+            </div>
+        </header>
+
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+            <div class="flash-wrap">
+                {% for message in messages %}
+                <div class="flash">{{ message }}</div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        {% endwith %}
+
+        <section class="content">
+            {% block content %}{% endblock %}
+        </section>
+    </main>
+</body>
+</html>

@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block title %}PakShield — Submit Issue{% endblock %}
+{% block page_title %}Submit Delivery Issue{% endblock %}
+{% block page_subtitle %}Delivery refusal, unavailable customer, wrong number ya related issue submit karein.{% endblock %}
+
+{% block content %}
+<div class="panel form-panel">
+    <form method="POST" class="grid-form">
+        <div class="input-group">
+            <label>Customer Phone</label>
+            <input type="text" name="phone" placeholder="0300-1234567" required>
+        </div>
+        <div class="input-group">
+            <label>Customer Name</label>
+            <input type="text" name="name" placeholder="Customer name" required>
+        </div>
+        <div class="input-group">
+            <label>City</label>
+            <input type="text" name="city" placeholder="Lahore, Karachi, Islamabad" required>
+        </div>
+        <div class="input-group">
+            <label>Area</label>
+            <input type="text" name="area" placeholder="Area / locality">
+        </div>
+        <div class="input-group">
+            <label>Courier</label>
+            <select name="courier">
+                <option value="">Select courier</option>
+                <option>PostEx</option>
+                <option>Leopards</option>
+                <option>Trax</option>
+                <option>TCS</option>
+                <option>M&P</option>
+                <option>Swyft</option>
+                <option>BlueEx</option>
+                <option>Other</option>
+            </select>
+        </div>
+        <div class="input-group">
+            <label>Tracking Number</label>
+            <input type="text" name="tracking" placeholder="Optional">
+        </div>
+        <div class="input-group">
+            <label>Order Amount</label>
+            <input type="text" name="amount" placeholder="e.g. 2500">
+        </div>
+        <div class="input-group">
+            <label>Issue Type</label>
+            <select name="issue_type" required>
+                <option value="">Select issue</option>
+                <option>Refused Delivery</option>
+                <option>Not Available</option>
+                <option>Phone Off</option>
+                <option>Wrong Number</option>
+                <option>No Cash Available</option>
+                <option>Fake Order</option>
+                <option>Changed City</option>
+                <option>Return Abuse</option>
+                <option>Other</option>
+            </select>
+        </div>
+        <div class="input-group full">
+            <label>Business Name</label>
+            <input type="text" name="business" value="{{ user.business }}" placeholder="Your shop / business name">
+        </div>
+        <div class="input-group full">
+            <label>Issue Description</label>
+            <textarea name="reason" placeholder="Short detail likhein ke issue kya hua tha..." required></textarea>
+        </div>
+        <div class="form-actions full">
+            <button type="submit" class="btn btn-primary"><i class="fa-solid fa-paper-plane"></i> Submit for Review</button>
+            <a href="/search" class="btn btn-ghost">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

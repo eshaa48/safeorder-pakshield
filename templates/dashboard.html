@@ -1,0 +1,286 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard — PakShield{% endblock %}
+
+{% block page_title %}
+Welcome back, {{ user.name }}
+{% endblock %}
+
+{% block page_subtitle %}
+{% if user.role == 'admin' %}
+Manage platform activity, users, reports, and seller protection data.
+{% else %}
+Run COD risk checks, submit delivery issues, and review courier performance.
+{% endif %}
+{% endblock %}
+
+{% block content %}
+
+{% if user.role == 'admin' %}
+{% if user.role == 'admin' and alerts %}
+<div class="section-card">
+    <div class="section-header">
+        <div>
+            <h2>Parcel Risk Alerts</h2>
+            <p>Automated alerts created from PostEx webhook status updates.</p>
+        </div>
+    </div>
+
+    <div class="table-wrap">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Tracking Number</th>
+                    <th>Customer</th>
+                    <th>Phone</th>
+                    <th>Status</th>
+                    <th>Alert</th>
+                    <th>Created At</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for alert in alerts %}
+                <tr>
+                    <td>{{ alert.get('Tracking Number', '') }}</td>
+                    <td>{{ alert.get('Customer Name', '') }}</td>
+                    <td>{{ alert.get('Customer Phone', '') }}</td>
+                    <td>
+                        <span class="status-badge rejected">
+                            {{ alert.get('New Status', '') }}
+                        </span>
+                    </td>
+                    <td>{{ alert.get('Message', '') }}</td>
+                    <td>{{ alert.get('Created At', '') }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endif %}
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-icon">
+            <i class="fa-solid fa-database"></i>
+        </div>
+        <div class="stat-number">{{ stats.total_reports }}</div>
+        <div class="stat-label">Total Reports</div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-icon">
+            <i class="fa-solid fa-circle-check"></i>
+        </div>
+        <div class="stat-number">{{ stats.approved_reports }}</div>
+        <div class="stat-label">Approved Reports</div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-icon">
+            <i class="fa-solid fa-clock"></i>
+        </div>
+        <div class="stat-number">{{ stats.pending_reports }}</div>
+        <div class="stat-label">Pending Reports</div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-icon">
+            <i class="fa-solid fa-users"></i>
+        </div>
+        <div class="stat-number">{{ stats.total_users }}</div>
+        <div class="stat-label">Active Users</div>
+    </div>
+</div>
+
+<div class="quick-grid">
+    <a href="/admin" class="quick-card">
+        <div class="quick-icon">
+            <i class="fa-solid fa-user-shield"></i>
+        </div>
+        <div>
+            <h3>Admin Panel</h3>
+            <p>Manage users, review reports, and control platform access.</p>
+        </div>
+    </a>
+
+    <a href="/search" class="quick-card">
+        <div class="quick-icon">
+            <i class="fa-solid fa-magnifying-glass-chart"></i>
+        </div>
+        <div>
+            <h3>Run Risk Check</h3>
+            <p>Search a specific phone number and view approved issue history.</p>
+        </div>
+    </a>
+
+    <a href="/courier-reviews" class="quick-card">
+        <div class="quick-icon">
+            <i class="fa-solid fa-truck-fast"></i>
+        </div>
+        <div>
+            <h3>Courier Insights</h3>
+            <p>View seller feedback about courier companies and city-level performance.</p>
+        </div>
+    </a>
+</div>
+
+<div class="section-card">
+    <div class="section-header">
+        <div>
+            <h2>Recent Delivery Issue Reports</h2>
+            <p>Only admins can view this internal report list.</p>
+        </div>
+    </div>
+
+    {% if recent_reports %}
+    <div class="table-wrap">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Customer</th>
+                    <th>Phone</th>
+                    <th>City</th>
+                    <th>Issue</th>
+                    <th>Business</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for r in recent_reports %}
+                <tr>
+                    <td>{{ r.get('Customer Name', '') }}</td>
+                    <td>{{ r.get('Phone Number', '') }}</td>
+                    <td>{{ r.get('City', '') }}</td>
+                    <td>{{ r.get('Reason', '') }}</td>
+                    <td>{{ r.get('Reported By', '') }}</td>
+                    <td>
+                        {% set status = r.get('Verification Status', 'Approved') or 'Approved' %}
+                        <span class="status-badge {{ status|lower }}">
+                            {{ status }}
+                        </span>
+                    </td>
+                    <td>{{ r.get('Date', '') }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <i class="fa-solid fa-inbox"></i>
+        <h3>No reports found</h3>
+        <p>Delivery issue reports will appear here after submission.</p>
+    </div>
+    {% endif %}
+</div>
+
+{% else %}
+
+<div class="quick-grid">
+    <a href="/search" class="quick-card">
+        <div class="quick-icon">
+            <i class="fa-solid fa-magnifying-glass-chart"></i>
+        </div>
+        <div>
+            <h3>Run COD Risk Check</h3>
+            <p>Enter a customer phone number to check approved delivery issue history.</p>
+        </div>
+    </a>
+
+    <a href="/add" class="quick-card">
+        <div class="quick-icon">
+            <i class="fa-solid fa-file-circle-plus"></i>
+        </div>
+        <div>
+            <h3>Submit Delivery Issue</h3>
+            <p>Report refused delivery, wrong number, unavailable customer, or similar issues.</p>
+        </div>
+    </a>
+
+    <a href="/courier-reviews" class="quick-card">
+        <div class="quick-icon">
+            <i class="fa-solid fa-truck-fast"></i>
+        </div>
+        <div>
+            <h3>Courier Insights</h3>
+            <p>View and submit courier company reviews based on real seller experience.</p>
+        </div>
+    </a>
+</div>
+
+<div class="section-card">
+    <div class="section-header">
+        <div>
+            <h2>Controlled Customer Data Access</h2>
+            <p>Your account can search specific records, but cannot browse the customer database.</p>
+        </div>
+    </div>
+
+    <div class="info-grid">
+        <div class="info-box">
+            <div class="info-icon">
+                <i class="fa-solid fa-magnifying-glass"></i>
+            </div>
+            <h3>Search Only</h3>
+            <p>You can only view a customer record when you enter a specific phone number.</p>
+        </div>
+
+        <div class="info-box">
+            <div class="info-icon">
+                <i class="fa-solid fa-lock"></i>
+            </div>
+            <h3>No Full List Access</h3>
+            <p>The complete customer report database is not visible to seller accounts.</p>
+        </div>
+
+        <div class="info-box">
+            <div class="info-icon">
+                <i class="fa-solid fa-truck"></i>
+            </div>
+            <h3>Courier Reviews</h3>
+            <p>Courier reviews are open for verified sellers to view and submit.</p>
+        </div>
+    </div>
+</div>
+
+<div class="section-card">
+    <div class="section-header">
+        <div>
+            <h2>Seller Access Summary</h2>
+            <p>This is what your seller account can do on PakShield.</p>
+        </div>
+    </div>
+
+    <div class="access-list">
+        <div class="access-row allowed">
+            <i class="fa-solid fa-check"></i>
+            <span>Search a specific customer phone number</span>
+        </div>
+
+        <div class="access-row allowed">
+            <i class="fa-solid fa-check"></i>
+            <span>Submit a delivery issue report</span>
+        </div>
+
+        <div class="access-row allowed">
+            <i class="fa-solid fa-check"></i>
+            <span>Submit and view courier company reviews</span>
+        </div>
+
+        <div class="access-row blocked">
+            <i class="fa-solid fa-xmark"></i>
+            <span>Browse the full customer report database</span>
+        </div>
+
+        <div class="access-row blocked">
+            <i class="fa-solid fa-xmark"></i>
+            <span>View recent customer reports from other sellers</span>
+        </div>
+    </div>
+</div>
+
+{% endif %}
+
+{% endblock %}

@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}PakShield — Risk Check{% endblock %}
+{% block page_title %}COD Risk Check{% endblock %}
+{% block page_subtitle %}Customer phone number enter karein aur delivery issue history check karein.{% endblock %}
+
+{% block content %}
+<div class="panel search-panel">
+    <form method="POST" class="search-form">
+        <div class="input-group">
+            <label>Customer Phone Number</label>
+            <input type="text" name="phone" value="{{ phone }}" placeholder="0300-1234567 ya +92 300 1234567" required>
+        </div>
+        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-magnifying-glass"></i> Check Risk</button>
+    </form>
+    <p class="hint">Search exact phone match par based hai. Full customer list kabhi show nahi hoti.</p>
+</div>
+
+{% if searched %}
+<div class="risk-summary {{ risk.class }}">
+    <div>
+        <span>Risk Result</span>
+        <h2>{{ risk.level }}</h2>
+        <p>{{ risk.summary }}</p>
+    </div>
+    <strong>{{ results|length }}</strong>
+</div>
+
+{% if results %}
+<div class="results-grid">
+    {% for r in results %}
+    <div class="result-card">
+        <div class="result-top">
+            <div>
+                <h3>{{ r.get('Customer Name', 'Unknown Customer') }}</h3>
+                <p>{{ r.get('City', '-') }}{% if r.get('Area') %}, {{ r.get('Area') }}{% endif %}</p>
+            </div>
+            <span class="status {{ r.get('Verification Status', 'approved')|lower }}">{{ r.get('Verification Status', 'approved') }}</span>
+        </div>
+        <div class="detail-grid">
+            <div><span>Phone</span><strong>{{ r.get('Phone Number', '-') }}</strong></div>
+            <div><span>Issue Type</span><strong>{{ r.get('Issue Type', '-') }}</strong></div>
+            <div><span>Courier</span><strong>{{ r.get('Courier', '-') }}</strong></div>
+            <div><span>Reported By</span><strong>{{ r.get('Business Name', r.get('Reported By', '-')) }}</strong></div>
+        </div>
+        <div class="reason-box">
+            <span>Issue Details</span>
+            <p>{{ r.get('Reason', '-') }}</p>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="panel empty-state">
+    <i class="fa-solid fa-circle-check"></i>
+    <h3>No Issue Record Found</h3>
+    <p>Is number ka record PakShield database mein nahi mila. Dispatch se pehle apni normal verification process zaroor follow karein.</p>
+</div>
+{% endif %}
+{% endif %}
+{% endblock %}

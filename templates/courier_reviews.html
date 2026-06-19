@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}PakShield — Courier Insights{% endblock %}
+{% block page_title %}Courier Insights{% endblock %}
+{% block page_subtitle %}City-wise courier performance aur sellers ke reviews dekhein.{% endblock %}
+
+{% block content %}
+<div class="two-col">
+    <div class="panel">
+        <div class="panel-head">
+            <div>
+                <h2>Latest Courier Reviews</h2>
+                <p>Sellers ke submitted experiences.</p>
+            </div>
+        </div>
+        <div class="review-list">
+            {% for r in reviews %}
+            <div class="review-card">
+                <div class="review-top">
+                    <strong>{{ r.get('Courier Name', '-') }}</strong>
+                    <span>{{ r.get('Rating', '-') }}/5</span>
+                </div>
+                <p>{{ r.get('Review', '-') }}</p>
+                <small>{{ r.get('City', '-') }} · {{ r.get('Reported By', '-') }} · {{ r.get('Date', '-') }}</small>
+            </div>
+            {% else %}
+            <div class="empty">Abhi koi review nahi.</div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="panel form-panel sticky-panel">
+        <h2>Add Review</h2>
+        <form method="POST" class="stack-form">
+            <div class="input-group">
+                <label>Courier Company</label>
+                <select name="courier" required>
+                    <option value="">Select courier</option>
+                    <option>PostEx</option><option>Leopards</option><option>Trax</option><option>TCS</option>
+                    <option>M&P</option><option>Swyft</option><option>BlueEx</option><option>Other</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label>City</label>
+                <input type="text" name="city" placeholder="City" required>
+            </div>
+            <div class="input-group">
+                <label>Rating</label>
+                <select name="rating" required>
+                    <option value="">Select rating</option>
+                    <option value="5">5 - Excellent</option>
+                    <option value="4">4 - Good</option>
+                    <option value="3">3 - Average</option>
+                    <option value="2">2 - Poor</option>
+                    <option value="1">1 - Very Bad</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label>Review</label>
+                <textarea name="review" placeholder="Courier experience likhein..." required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit Review</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
